@@ -1,92 +1,47 @@
-#! /c/iverilog/bin/vvp
-:ivl_version "0.9.7 " "(v0_9_7)";
-:vpi_time_precision + 0;
-:vpi_module "system";
-:vpi_module "v2005_math";
-:vpi_module "va_math";
-S_00A731F0 .scope module, "alu" "alu" 2 2;
- .timescale 0 0;
-v00A783D0_0 .net "opcode", 2 0, C4<zzz>; 0 drivers
-v00A7E870_0 .net "operandA", 7 0, C4<zzzzzzzz>; 0 drivers
-v00A7E8C8_0 .net "operandB", 7 0, C4<zzzzzzzz>; 0 drivers
-v00A7E920_0 .var "result", 7 0;
-E_00A77F88 .event edge, v00A783D0_0, v00A7E870_0, v00A7E8C8_0;
-    .scope S_00A731F0;
-T_0 ;
-    %wait E_00A77F88;
-    %load/v 8, v00A783D0_0, 3;
-    %cmpi/u 8, 0, 3;
-    %jmp/1 T_0.0, 6;
-    %cmpi/u 8, 1, 3;
-    %jmp/1 T_0.1, 6;
-    %cmpi/u 8, 2, 3;
-    %jmp/1 T_0.2, 6;
-    %cmpi/u 8, 3, 3;
-    %jmp/1 T_0.3, 6;
-    %cmpi/u 8, 4, 3;
-    %jmp/1 T_0.4, 6;
-    %cmpi/u 8, 5, 3;
-    %jmp/1 T_0.5, 6;
-    %cmpi/u 8, 6, 3;
-    %jmp/1 T_0.6, 6;
-    %cmpi/u 8, 7, 3;
-    %jmp/1 T_0.7, 6;
-    %set/v v00A7E920_0, 0, 8;
-    %jmp T_0.9;
-T_0.0 ;
-    %load/v 8, v00A7E870_0, 8;
-    %load/v 16, v00A7E8C8_0, 8;
-    %add 8, 16, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.1 ;
-    %load/v 8, v00A7E870_0, 8;
-    %load/v 16, v00A7E8C8_0, 8;
-    %sub 8, 16, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.2 ;
-    %load/v 8, v00A7E870_0, 8;
-    %load/v 16, v00A7E8C8_0, 8;
-    %and 8, 16, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.3 ;
-    %load/v 8, v00A7E870_0, 8;
-    %load/v 16, v00A7E8C8_0, 8;
-    %or 8, 16, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.4 ;
-    %load/v 8, v00A7E870_0, 8;
-    %load/v 16, v00A7E8C8_0, 8;
-    %xor 8, 16, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.5 ;
-    %load/v 8, v00A7E870_0, 8;
-    %inv 8, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.6 ;
-    %load/v 8, v00A7E870_0, 8;
-    %ix/load 0, 1, 0;
-    %mov 4, 0, 1;
-    %shiftl/i0  8, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.7 ;
-    %load/v 8, v00A7E870_0, 8;
-    %ix/load 0, 1, 0;
-    %mov 4, 0, 1;
-    %shiftr/i0  8, 8;
-    %set/v v00A7E920_0, 8, 8;
-    %jmp T_0.9;
-T_0.9 ;
-    %jmp T_0;
-    .thread T_0, $push;
-# The file index is used to find the file name in the following table.
-:file_names 3;
-    "N/A";
-    "<interactive>";
-    "alu.v";
+`timescale 1ns / 1ps
+
+module alu_tb;
+
+reg [2:0] opcode;
+reg [7:0] operandA;
+reg [7:0] operandB;
+wire [7:0] result;
+
+alu uut (
+    .opcode(opcode),
+    .operandA(operandA),
+    .operandB(operandB),
+    .result(result)
+);
+
+initial begin
+    $monitor("opcode = %b | operandA = %d | operandB = %d | result = %d", opcode, operandA, operandB, result);
+
+    // Test ADD
+    opcode = 3'b000; operandA = 8'd10; operandB = 8'd5; #10;
+
+    // Test SUB
+    opcode = 3'b001; operandA = 8'd20; operandB = 8'd7; #10;
+
+    // Test AND
+    opcode = 3'b010; operandA = 8'b10101010; operandB = 8'b11001100; #10;
+
+    // Test OR
+    opcode = 3'b011; operandA = 8'b10101010; operandB = 8'b01010101; #10;
+
+    // Test XOR
+    opcode = 3'b100; operandA = 8'b11110000; operandB = 8'b00001111; #10;
+
+    // Test NOT
+    opcode = 3'b101; operandA = 8'b11110000; operandB = 8'd0; #10;
+
+    // Test Shift Left
+    opcode = 3'b110; operandA = 8'b00001111; operandB = 8'd0; #10;
+
+    // Test Shift Right
+    opcode = 3'b111; operandA = 8'b11110000; operandB = 8'd0; #10;
+
+    $finish;
+end
+
+endmodule
