@@ -1,0 +1,8 @@
+opcode = 000 | operandA = 10 | operandB = 5 | result = 15
+opcode = 001 | operandA = 20 | operandB = 7 | result = 13
+opcode = 010 | operandA = 170 | operandB = 204 | result = 136
+opcode = 011 | operandA = 170 | operandB = 85 | result = 255
+opcode = 100 | operandA = 240 | operandB = 15 | result = 255
+opcode = 101 | operandA = 240 | operandB = 0 | result = 15
+opcode = 110 | operandA = 15 | operandB = 0 | result = 30
+opcode = 111 | operandA = 240 | operandB = 0 | result = 120
